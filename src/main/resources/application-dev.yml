@@ -1,0 +1,14 @@
+conf:
+    db:
+        host: db
+        port: 5432
+        database: ofx-ms-data
+        user: postgres
+        pass: postgres
+    permission-checker:
+        url: http://localhost:8050/api/v1/permission-checker
+    rabbit:
+        host: rabbitmq
+        port: 5672
+        user: admin
+        pass: admin

@@ -1,0 +1,14 @@
+conf:
+    db:
+        host: db
+        port: 5432
+        database: ofx-ms-data
+        user: ${POSTGRESQL_USER}
+        pass: ${POSTGRESQL_PASS}
+    permission-checker:
+        url: http://ofx-permission-checker:8050/api/v1/permission-checker
+    rabbit:
+        host: rabbitmq
+        port: 5672
+        user: ${RABBIT_USER}
+        pass: ${RABBIT_PASS}
