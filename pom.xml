@@ -128,6 +128,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>ofx-ms-data</finalName>
 	</build>
 
 </project>

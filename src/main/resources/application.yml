@@ -7,6 +7,7 @@ application:
 spring:
     profiles:
         default: dev
+        active: ${SPRING_ACTIVE_PROFILE:default}
     webflux:
         base-path: /api/v1/data
     application:
