@@ -46,4 +46,4 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         port: ${{ secrets.VPS_PORT }}
         script: |
-          cd /srv;docker stop ofx-ms-data;docker rm ofx-ms-data;docker pull luisfj/ofx-ms-data:latest;docker run -d --env-file ./deploy/env.list --name ofx-ms-data -p 8030:8030 luisfj/ofx-ms-data
+          cd /srv;docker stop ofx-ms-data;docker rm ofx-ms-data;docker pull luisfj/ofx-ms-data:latest;docker run -d --env-file ./deploy/env.list --network prodnet --name ofx-ms-data luisfj/ofx-ms-data
