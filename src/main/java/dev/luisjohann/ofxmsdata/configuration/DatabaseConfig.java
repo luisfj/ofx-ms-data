@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -76,6 +77,16 @@ public class DatabaseConfig {
    @Bean
    public ConnectionFactory r2dbcConnectionFactory() {
       return ConnectionFactories.get(r2dbcConnectionFactoryOptions());
+   }
+
+   @Bean
+   @Profile("test")
+   public ConnectionFactory connectionFactoryH2() {
+      System.out.println(">>>>>>>>>> Using H2 in mem R2DBC connection factory");
+      // return
+      // ConnectionFactories.get("r2dbc:h2:mem:///"+dbBase+"?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+      return ConnectionFactories.get("r2dbc:h2:mem:///" + dbBase);
+      // return H2ConnectionFactory.inMemory(dbBase);
    }
 
    @Bean

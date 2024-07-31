@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 // @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 // @AutoConfigureWebTestClient
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class OfxmsdataApplicationTests {
 
 	// @Autowired
