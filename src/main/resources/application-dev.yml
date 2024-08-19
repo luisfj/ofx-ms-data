@@ -2,13 +2,20 @@ conf:
     db:
         host: db
         port: 5432
-        database: ofx-ms-data
+        database: ofxmsdata
         user: postgres
         pass: postgres
     permission-checker:
-        url: http://localhost:8050/api/v1/permission-checker
+        url: http://localhost:8080/api/v1/permission-checker
     rabbit:
         host: rabbitmq
         port: 5672
         user: admin
         pass: admin
+
+spring:
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:9091/realms/luifj-ofx-auth        

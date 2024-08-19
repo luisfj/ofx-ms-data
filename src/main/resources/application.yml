@@ -5,6 +5,11 @@ server:
 application:
     timezone: America/Sao_Paulo
 spring:
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:9091/realms/luifj-ofx-auth  
     profiles:
         active: ${SPRING_ACTIVE_PROFILE:dev}
     webflux:
@@ -66,3 +71,8 @@ queue:
         imported: imported
 exchange:
     name: ofx.app
+
+eureka:
+  client:
+    service-url:
+      defaultZone : http://localhost:8761/eureka/

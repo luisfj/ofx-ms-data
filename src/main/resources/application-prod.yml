@@ -2,7 +2,7 @@ conf:
     db:
         host: db
         port: 5432
-        database: ofx-ms-data
+        database: ofxmsdata
         user: ${POSTGRESQL_USER}
         pass: ${POSTGRESQL_PASS}
     permission-checker:

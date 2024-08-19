@@ -2,7 +2,7 @@ conf:
     db:
         host: 
         port: 0
-        database: ofx-ms-data
+        database: ofxmsdata
         user: sa
         pass: password
     permission-checker:

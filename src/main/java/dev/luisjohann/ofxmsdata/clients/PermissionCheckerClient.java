@@ -1,16 +1,57 @@
 package dev.luisjohann.ofxmsdata.clients;
 
-import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.reactive.function.client.WebClient;
 
-@FeignClient(name = "permission-checker")
-public interface PermissionCheckerClient {
+import reactor.core.publisher.Mono;
 
-      @RequestMapping(method = RequestMethod.GET, value = "/check-post-data/{user_id}/{ue_id}")
-      void checkPostDataOfx(@PathVariable("user_id") Long userId, @PathVariable("ue_id") Long ueId);
+@Service
+public class PermissionCheckerClient {
+      private final WebClient webClient;
 
-      @RequestMapping(method = RequestMethod.GET, value = "/check-get-data/{user_id}/{ue_id}")
-      Void checkGetDataPermission(@PathVariable("user_id") Long userId, @PathVariable("ue_id") Long ueId);
+      public PermissionCheckerClient(WebClient.Builder webClientBuilder,
+                  @Value("${conf.permission-checker.url}") String permissionCheckerUrl) {
+            this.webClient = webClientBuilder.baseUrl(permissionCheckerUrl).build();
+      }
+
+      public Mono<Void> checkPostDataOfx(@PathVariable("user_id") Long userId, @PathVariable("ue_id") Long ueId) {
+            String uri = String.format("/check-post-data/%s/%s", userId, ueId);
+
+            return ReactiveSecurityContextHolder.getContext()
+                        .map(this::extractToken)
+                        .flatMap(token -> webClient.get()
+                                    .uri(uri)
+                                    .header("Authorization", "Bearer " + token)
+                                    .retrieve()
+                                    .bodyToMono(Void.class));
+      }
+
+      public Mono<Void> checkGetDataPermission(@PathVariable("user_id") Long userId, @PathVariable("ue_id") Long ueId) {
+            String uri = String.format("/check-get-data/%s/%s", userId, ueId);
+
+            return ReactiveSecurityContextHolder.getContext()
+                        .map(this::extractToken)
+                        .flatMap(token -> webClient.get()
+                                    .uri(uri)
+                                    .header("Authorization", "Bearer " + token)
+                                    .retrieve()
+                                    .bodyToMono(Void.class));
+      }
+
+      private String extractToken(SecurityContext context) {
+            Authentication authentication = context.getAuthentication();
+            if (authentication.getPrincipal() instanceof Jwt) {
+                  Jwt jwt = (Jwt) authentication.getPrincipal();
+                  // Acessar dados do JWT
+                  return jwt.getTokenValue();
+            }
+            throw new RuntimeException("Token não encontrado");
+
+      }
 }
