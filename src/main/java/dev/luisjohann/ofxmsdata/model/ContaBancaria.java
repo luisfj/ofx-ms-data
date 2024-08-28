@@ -10,7 +10,6 @@ public record ContaBancaria(
             String numero,
             String banco,
             String cor,
-            Long idUser,
             Long idUe,
             StatusCadastro status) {
 

@@ -66,9 +66,13 @@ queue:
     name: 
         sse: sse.queue
         imported: imported.queue
+        user-change: change.user.queue
+        ue-change: change.ue.queue
     routing-key:
         sse: sse
         imported: imported
+        user-change: changes.user
+        ue-change: changes.ue
 exchange:
     name: ofx.app
 

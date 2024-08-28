@@ -18,7 +18,6 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 	@Query("""
 			   select
 				o.id,
-				o.id_user,
 				o.id_ue,
 				ue.name as nome_ue,
 				o.id_conta_bancaria as id_conta,
@@ -39,16 +38,15 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 			from operacao o
 				left join unidade_economica ue on ue.id = o.id_ue
 				left join conta_bancaria cb on cb.id = o.id_conta_bancaria
-			where o.id_importacao = :idImportacao and o.id_user = :idUser and o.id_ue = :idUe
+			where o.id_importacao = :idImportacao and o.id_ue = :idUe
 			   """)
-	Flux<OperacoesDTO> findByIdImportacao(@Param("idUser") Long idUser, @Param("idUe") Long idUe,
+	Flux<OperacoesDTO> findByIdImportacao(@Param("idUe") Long idUe,
 			@Param("idImportacao") Long idImportacao);
 
 	@Query("""
 			  with cte_grupos as (
 				select
 					o.id,
-					o.id_user,
 					o.id_ue,
 					ue.name as nome_ue,
 					o.id_conta_bancaria as id_conta,
@@ -69,15 +67,13 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 				from operacao o
 					left join unidade_economica ue on ue.id = o.id_ue
 					left join conta_bancaria cb on cb.id = o.id_conta_bancaria
-				where o.id_user = :idUser
-					and o.id_ue = :idUe
+				where o.id_ue = :idUe
 					and o.tipo = 'GROUP'
 					and o.data_hora between :dtInicial and :dtFinal
 			),
 			cte_childs as (
 				select
 					o.id,
-					o.id_user,
 					o.id_ue,
 					ue.name as nome_ue,
 					o.id_conta_bancaria as id_conta,
@@ -105,7 +101,6 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 			select * from cte_childs
 			  """)
 	Flux<OperacoesDTO> findGruposByIdImportacaoAndDataBetween(
-			@Param("idUser") Long idUser,
 			@Param("idUe") Long idUe,
 			@Param("dtInicial") LocalDate dtInicial,
 			@Param("dtFinal") LocalDate dtFinal);
@@ -113,7 +108,6 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 	@Query("""
 			select
 				o.id,
-				o.id_user,
 				o.id_ue,
 				ue.name as nome_ue,
 				o.id_conta_bancaria as id_conta,
@@ -134,17 +128,15 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 			from operacao o
 				left join unidade_economica ue on ue.id = o.id_ue
 				left join conta_bancaria cb on cb.id = o.id_conta_bancaria
-			where o.id_user = :idUser
-				and o.id_ue = :idUe
+			where o.id_ue = :idUe
 				and o.tipo <> 'GROUP'
 				and o.id_grupo is null
 				and o.data_hora between :dtInicial and :dtFinal
 			 """)
 	Flux<OperacoesDTO> findOperacoesPendendesByDataBetween(
-			@Param("idUser") Long idUser,
 			@Param("idUe") Long idUe,
 			@Param("dtInicial") LocalDate dtInicial,
 			@Param("dtFinal") LocalDate dtFinal);
 
-	Mono<Operacao> findByIdUserAndIdUeAndId(Long idUser, Long idUe, Long id);
+	Mono<Operacao> findByIdUeAndId(Long idUe, Long id);
 }

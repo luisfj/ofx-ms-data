@@ -10,7 +10,6 @@ import dev.luisjohann.ofxmsdata.enums.TipoOperacao;
 
 public record Operacao(
             @Id Long id,
-            Long idUser,
             Long idUe,
             Long idImportacao,
             TipoOperacao tipo,

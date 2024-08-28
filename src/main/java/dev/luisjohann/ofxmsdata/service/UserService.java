@@ -20,14 +20,14 @@ public class UserService {
       return repository.findByNameContaining(name);
    }
 
-   public Mono<User> update(Long id, User user) {
+   public Mono<User> update(String id, User user) {
       return repository.findById(id)
             .map(Optional::of)
             .defaultIfEmpty(Optional.empty())
             .flatMap(optionalTutorial -> {
                if (optionalTutorial.isPresent()) {
                   // user.setId(id);
-                  var sUser = new User(id, user.name());
+                  var sUser = new User(id, user.getEmail(), user.getName(), false);
                   return repository.save(sUser);
                   // return repository.save(user);
                }

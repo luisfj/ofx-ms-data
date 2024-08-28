@@ -10,8 +10,7 @@ import jakarta.persistence.Table;
 @Table
 public record Importacao(
       @Id Long id,
-      Long idUser,
-      Long idUserImportador,
+      String idUserImportador,
       Long idUe,
       Long idConta,
       LocalDateTime dataImportacao,

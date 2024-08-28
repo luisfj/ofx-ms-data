@@ -1,5 +1,6 @@
 package dev.luisjohann.ofxmsdata.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -13,61 +14,89 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableRabbit
 @RequiredArgsConstructor
 public class RabbitConfig {
 
-   @Value("${queue.name.sse}")
-   private String queueNameSse;
-   @Value("${queue.name.imported}")
-   private String queueImported;
+    @Value("${queue.name.sse}")
+    private String queueNameSse;
+    @Value("${queue.name.imported}")
+    private String queueImported;
 
-   @Value("${queue.routing-key.sse}")
-   private String routingKeySse;
-   @Value("${queue.routing-key.imported}")
-   private String routingKeyImported;
+    @Value("${queue.routing-key.sse}")
+    private String routingKeySse;
+    @Value("${queue.routing-key.imported}")
+    private String routingKeyImported;
 
-   @Value("${exchange.name}")
-   private String exchangeName;
+    @Value("${queue.name.user-change}")
+    private String queueUserChange;
+    @Value("${queue.name.ue-change}")
+    private String queueUeChange;
 
-   @Bean(name = "queueSse")
-   public Queue queueSse() {
-      return new Queue(queueNameSse, true);
-   }
+    @Value("${queue.routing-key.user-change}")
+    private String routingKeyUserChange;
+    @Value("${queue.routing-key.ue-change}")
+    private String routingKeyUeChange;
 
-   @Bean(name = "queueImported")
-   public Queue queueImported() {
-      return new Queue(queueImported, true);
-   }
+    @Value("${exchange.name}")
+    private String exchangeName;
 
-   @Bean
-   DirectExchange exchange() {
-      return new DirectExchange(exchangeName);
-   }
+    @Bean(name = "queueSse")
+    public Queue queueSse() {
+        return new Queue(queueNameSse, true);
+    }
 
-   @Bean
-   Binding queueBinding(@Qualifier(value = "queueSse") Queue sseQueue, DirectExchange exchange) {
-      return BindingBuilder.bind(sseQueue).to(exchange).with(routingKeySse);
-   }
+    @Bean(name = "queueImported")
+    public Queue queueImported() {
+        return new Queue(queueImported, true);
+    }
 
-   @Bean
-   Binding queueBindingImported(@Qualifier(value = "queueImported") Queue importedQueue, DirectExchange exchange) {
-      return BindingBuilder.bind(importedQueue).to(exchange).with(routingKeyImported);
-   }
+    @Bean(name = "queueUserChange")
+    public Queue queueUserChange() {
+        return new Queue(queueUserChange, true);
+    }
 
-   @Bean
-   public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
-      final var rabbitTemplate = new RabbitTemplate(connectionFactory);
-      rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
-      return rabbitTemplate;
-   }
+    @Bean(name = "queueUeChange")
+    public Queue queueUeChange() {
+        return new Queue(queueUeChange, true);
+    }
 
-   @Bean
-   public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
-      return new Jackson2JsonMessageConverter();
-   }
+    @Bean
+    DirectExchange exchange() {
+        return new DirectExchange(exchangeName);
+    }
+
+    @Bean
+    Binding queueBinding(@Qualifier(value = "queueSse") Queue sseQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(sseQueue).to(exchange).with(routingKeySse);
+    }
+
+    @Bean
+    Binding queueBindingImported(@Qualifier(value = "queueImported") Queue importedQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(importedQueue).to(exchange).with(routingKeyImported);
+    }
+
+    @Bean
+    Binding queueBindingUserChange(@Qualifier(value = "queueUserChange") Queue importedQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(importedQueue).to(exchange).with(routingKeyUserChange);
+    }
+
+    @Bean
+    Binding queueBindingUeChange(@Qualifier(value = "queueUeChange") Queue importedQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(importedQueue).to(exchange).with(routingKeyUeChange);
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
+        final var rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
+        return rabbitTemplate;
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
 
 }

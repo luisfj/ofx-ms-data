@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 
 @Repository
 // public interface UserRepository extends R2dbcRepository<User, Long> {
-public interface UserRepositoryAsync extends R2dbcRepository<User, Long> {
+public interface UserRepositoryAsync extends R2dbcRepository<User, String> {
 
    Flux<User> findByNameContaining(String name);
 }
