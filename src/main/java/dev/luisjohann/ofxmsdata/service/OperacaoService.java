@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -52,8 +53,8 @@ public class OperacaoService {
                 .map(this::organizaGruposEFilhos);
     }
 
-    public Flux<OperacoesDTO> findOperacoesPendendesByDataBetween(Long idUe, LocalDate dtInicial,
-                                                                  LocalDate dtFinal) {
+    public Flux<OperacoesDTO> findOperacoesPendendesByDataBetween(Long idUe, LocalDateTime dtInicial,
+                                                                  LocalDateTime dtFinal) {
         return asyncRepository.findOperacoesPendendesByDataBetween(idUe, dtInicial, dtFinal);
     }
 

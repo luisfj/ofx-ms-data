@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,8 +27,8 @@ public class GrupoService {
     final OperacaoRepository repository;
     final OperacaoRepositoryAsync asyncRepository;
 
-    public Mono<List<OperacoesDTO>> findByIdImportacao(Long idUe, LocalDate dtInicial,
-                                                       LocalDate dtFinal) {
+    public Mono<List<OperacoesDTO>> findByIdImportacao(Long idUe, LocalDateTime dtInicial,
+                                                       LocalDateTime dtFinal) {
         return asyncRepository
                 .findGruposByIdImportacaoAndDataBetween(idUe, dtInicial, dtFinal)
                 .collectList()

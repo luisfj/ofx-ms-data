@@ -1,6 +1,7 @@
 package dev.luisjohann.ofxmsdata.repository.r2dbc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
@@ -102,8 +103,8 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 			  """)
 	Flux<OperacoesDTO> findGruposByIdImportacaoAndDataBetween(
 			@Param("idUe") Long idUe,
-			@Param("dtInicial") LocalDate dtInicial,
-			@Param("dtFinal") LocalDate dtFinal);
+			@Param("dtInicial") LocalDateTime dtInicial,
+			@Param("dtFinal") LocalDateTime dtFinal);
 
 	@Query("""
 			select
@@ -135,8 +136,8 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 			 """)
 	Flux<OperacoesDTO> findOperacoesPendendesByDataBetween(
 			@Param("idUe") Long idUe,
-			@Param("dtInicial") LocalDate dtInicial,
-			@Param("dtFinal") LocalDate dtFinal);
+			@Param("dtInicial") LocalDateTime dtInicial,
+			@Param("dtFinal") LocalDateTime dtFinal);
 
 	Mono<Operacao> findByIdUeAndId(Long idUe, Long id);
 }

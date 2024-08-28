@@ -6,6 +6,7 @@ import dev.luisjohann.ofxmsdata.dto.NovaOperacaoResponseDTO;
 import dev.luisjohann.ofxmsdata.dto.OperacoesDTO;
 import dev.luisjohann.ofxmsdata.dto.UpdateOperacoesDTO;
 import dev.luisjohann.ofxmsdata.service.OperacaoService;
+import jakarta.ws.rs.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,12 +40,14 @@ public class OperacaoController {
     @GetMapping("/pendentes/{idUe}")
     @ResponseStatus(HttpStatus.OK)
     public Flux<OperacoesDTO> buscarOperacoesPendentes(
-            @PathVariable("idUe") Long idUe) throws InterruptedException {
-
+            @PathVariable("idUe") Long idUe,
+            @PathParam("dataInicial") LocalDate dataInicial,
+            @PathParam("dataFinal") LocalDate dataFinal
+    ) throws InterruptedException {
         permissionChecker.checkGetDataPermission(idUe);
         // Thread.sleep(RandomGenerator.getDefault().nextLong(1000, 3000));
-        return service.findOperacoesPendendesByDataBetween(idUe, LocalDate.of(2000, 1, 1),
-                LocalDate.of(2040, 1, 1));
+        return service.findOperacoesPendendesByDataBetween(idUe, dataInicial.atStartOfDay(),
+                dataFinal.atTime(23, 59, 59));
     }
 
     @PutMapping("/{idUe}")

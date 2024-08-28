@@ -5,6 +5,7 @@ import dev.luisjohann.ofxmsdata.dto.NovoGrupoDTO;
 import dev.luisjohann.ofxmsdata.dto.NovoGrupoResponseDTO;
 import dev.luisjohann.ofxmsdata.dto.OperacoesDTO;
 import dev.luisjohann.ofxmsdata.service.GrupoService;
+import jakarta.ws.rs.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,11 +29,14 @@ public class GrupoController {
     @GetMapping("/{idUe}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<List<OperacoesDTO>> buscarImportacoesPendentes(
-            @PathVariable("idUe") Long idUe) throws InterruptedException {
+            @PathVariable("idUe") Long idUe,
+            @PathParam("dataInicial") LocalDate dataInicial,
+            @PathParam("dataFinal") LocalDate dataFinal) throws InterruptedException {
 
         permissionChecker.checkGetDataPermission(idUe);
         // Thread.sleep(RandomGenerator.getDefault().nextLong(1000, 3000));
-        return service.findByIdImportacao(idUe, LocalDate.of(2000, 1, 1), LocalDate.of(2040, 1, 1));
+        return service.findByIdImportacao(idUe, dataInicial.atStartOfDay(),
+                dataFinal.atTime(23, 59, 59));
     }
 
     @PostMapping("/{idUe}")
