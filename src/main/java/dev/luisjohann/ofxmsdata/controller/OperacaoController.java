@@ -1,13 +1,11 @@
 package dev.luisjohann.ofxmsdata.controller;
 
 import dev.luisjohann.ofxmsdata.clients.PermissionCheckerClient;
-import dev.luisjohann.ofxmsdata.dto.NovaOperacaoDTO;
-import dev.luisjohann.ofxmsdata.dto.NovaOperacaoResponseDTO;
-import dev.luisjohann.ofxmsdata.dto.OperacoesDTO;
-import dev.luisjohann.ofxmsdata.dto.UpdateOperacoesDTO;
+import dev.luisjohann.ofxmsdata.dto.*;
 import dev.luisjohann.ofxmsdata.service.OperacaoService;
 import jakarta.ws.rs.PathParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +14,14 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 // @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/operacao")
 @RequiredArgsConstructor
+@Slf4j
 public class OperacaoController {
 
     final PermissionCheckerClient permissionChecker;
@@ -43,10 +43,27 @@ public class OperacaoController {
             @PathVariable("idUe") Long idUe,
             @PathParam("dataInicial") LocalDate dataInicial,
             @PathParam("dataFinal") LocalDate dataFinal
-    ) throws InterruptedException {
+    ) {
+        log.info("buscarOperacoesPendentes ue:{} dataInicial: {} dataFinal: {}",
+                idUe, dataInicial.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                dataFinal.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         permissionChecker.checkGetDataPermission(idUe);
-        // Thread.sleep(RandomGenerator.getDefault().nextLong(1000, 3000));
         return service.findOperacoesPendendesByDataBetween(idUe, dataInicial.atStartOfDay(),
+                dataFinal.atTime(23, 59, 59));
+    }
+
+    @GetMapping("/processadas/{idUe}")
+    @ResponseStatus(HttpStatus.OK)
+    public Flux<OperacoesProcessadasDTO> buscarOperacoesProcessadas(
+            @PathVariable("idUe") Long idUe,
+            @PathParam("dataInicial") LocalDate dataInicial,
+            @PathParam("dataFinal") LocalDate dataFinal
+    ) {
+        log.info("buscarOperacoesProcessadas ue:{} dataInicial: {} dataFinal: {}",
+                idUe, dataInicial.atStartOfDay().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                dataFinal.atTime(23, 59, 59).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        permissionChecker.checkGetDataPermission(idUe);
+        return service.findOperacoesProcessadasByDataBetween(idUe, dataInicial.atStartOfDay(),
                 dataFinal.atTime(23, 59, 59));
     }
 

@@ -28,7 +28,7 @@ public class OperacoesDTO {
     String corConta;
     Long idImportacao;
     TipoOperacao tipo;
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime dataHora;
     BigDecimal valor;
