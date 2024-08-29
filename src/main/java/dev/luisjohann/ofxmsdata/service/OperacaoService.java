@@ -58,6 +58,11 @@ public class OperacaoService {
         return asyncRepository.findOperacoesPendendesByDataBetween(idUe, dtInicial, dtFinal);
     }
 
+    public Flux<OperacoesProcessadasDTO> findOperacoesProcessadasByDataBetween(Long idUe, LocalDateTime dtInicial,
+                                                                  LocalDateTime dtFinal) {
+        return asyncRepository.findOperacoesProcessadasByDataBetween(idUe, dtInicial, dtFinal);
+    }
+
     private List<OperacoesDTO> organizaGruposEFilhos(List<OperacoesDTO> operacoes) {
         var baseGrupos = operacoes
                 .stream()

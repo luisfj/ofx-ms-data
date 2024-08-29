@@ -3,6 +3,7 @@ package dev.luisjohann.ofxmsdata.repository.r2dbc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import dev.luisjohann.ofxmsdata.dto.OperacoesProcessadasDTO;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.data.repository.query.Param;
@@ -37,7 +38,7 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 				o.id_grupo,
 				false as changes
 			from operacao o
-				left join unidade_economica ue on ue.id = o.id_ue
+				inner join unidade_economica ue on ue.id = o.id_ue
 				left join conta_bancaria cb on cb.id = o.id_conta_bancaria
 			where o.id_importacao = :idImportacao and o.id_ue = :idUe
 			   """)
@@ -66,7 +67,7 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 					o.id_grupo,
 					false as changes
 				from operacao o
-					left join unidade_economica ue on ue.id = o.id_ue
+					inner join unidade_economica ue on ue.id = o.id_ue
 					left join conta_bancaria cb on cb.id = o.id_conta_bancaria
 				where o.id_ue = :idUe
 					and o.tipo = 'GROUP'
@@ -93,7 +94,7 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 					o.id_grupo,
 					false as changes
 				from operacao o
-					left join unidade_economica ue on ue.id = o.id_ue
+					inner join unidade_economica ue on ue.id = o.id_ue
 					left join conta_bancaria cb on cb.id = o.id_conta_bancaria
 				where o.id_grupo in (select id from cte_grupos)
 			)
@@ -127,7 +128,7 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 				o.id_grupo,
 				false as changes
 			from operacao o
-				left join unidade_economica ue on ue.id = o.id_ue
+				inner join unidade_economica ue on ue.id = o.id_ue
 				left join conta_bancaria cb on cb.id = o.id_conta_bancaria
 			where o.id_ue = :idUe
 				and o.tipo <> 'GROUP'
@@ -135,6 +136,40 @@ public interface OperacaoRepositoryAsync extends R2dbcRepository<Operacao, Long>
 				and o.data_hora between :dtInicial and :dtFinal
 			 """)
 	Flux<OperacoesDTO> findOperacoesPendendesByDataBetween(
+			@Param("idUe") Long idUe,
+			@Param("dtInicial") LocalDateTime dtInicial,
+			@Param("dtFinal") LocalDateTime dtFinal);
+
+	@Query("""
+			select
+				o.id,
+				o.id_ue,
+				ue.name as nome_ue,
+				o.id_conta_bancaria as id_conta,
+				cb.nome as nome_conta,
+				cb.numero as nr_conta,
+				cb.banco as banco,
+				cb.cor as cor_conta,
+				o.tipo,
+				o.data_hora,
+				o.valor,
+				o.fit_id,
+				o.ref_num,
+				o.memo,
+				o.status,
+				o.ordem,
+				o.id_grupo,
+				grp.memo as nome_grupo,
+				grp.data_hora as data_hora_grupo
+			from operacao o
+				inner join operacao grp on grp.id = o.id_grupo
+				inner join unidade_economica ue on ue.id = o.id_ue
+				left join conta_bancaria cb on cb.id = o.id_conta_bancaria
+			where o.id_ue = :idUe
+				and o.tipo <> 'GROUP'
+				and o.data_hora between :dtInicial and :dtFinal
+			 """)
+	Flux<OperacoesProcessadasDTO> findOperacoesProcessadasByDataBetween(
 			@Param("idUe") Long idUe,
 			@Param("dtInicial") LocalDateTime dtInicial,
 			@Param("dtFinal") LocalDateTime dtFinal);
