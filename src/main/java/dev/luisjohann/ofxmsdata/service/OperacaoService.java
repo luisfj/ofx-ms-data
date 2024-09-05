@@ -118,8 +118,8 @@ public class OperacaoService {
     public NovaOperacaoResponseDTO salvarOperacao(Long idUe, NovaOperacaoDTO novaOperacaoDTO) {
         var operacaoEntity = OperacaoMapper.INSTANCE.dtoToEntity(novaOperacaoDTO);
         operacaoEntity.setStatus(StatusOperacao.MANUAL);
-        operacaoEntity.setTipo(BigDecimal.ZERO.compareTo(novaOperacaoDTO.valor()) >= 0 ? TipoOperacao.CREDIT
-                : TipoOperacao.DEBIT);
+        operacaoEntity.setTipo(BigDecimal.ZERO.compareTo(novaOperacaoDTO.valor()) >= 0 ? TipoOperacao.DEBIT
+                : TipoOperacao.CREDIT);
         operacaoEntity.setIdUe(idUe);
         if (operacaoEntity.getIdGrupo() != null && operacaoEntity.getIdGrupo() == 0)
             operacaoEntity.setIdGrupo(null);
@@ -154,8 +154,8 @@ public class OperacaoService {
             operacaoEntity.setIdGrupo(null);
         else
             operacaoEntity.setIdGrupo(novaOperacaoDTO.idGrupo());
-        operacaoEntity.setTipo(BigDecimal.ZERO.compareTo(novaOperacaoDTO.valor()) >= 0 ? TipoOperacao.CREDIT
-                : TipoOperacao.DEBIT);
+        operacaoEntity.setTipo(BigDecimal.ZERO.compareTo(novaOperacaoDTO.valor()) >= 0 ? TipoOperacao.DEBIT
+                : TipoOperacao.CREDIT);
 
         var saved = repository.save(operacaoEntity);
         return OperacaoMapper.INSTANCE.entityToNovaOperacaoResponseDTo(saved);
