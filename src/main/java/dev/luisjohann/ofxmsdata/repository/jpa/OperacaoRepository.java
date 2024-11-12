@@ -20,4 +20,6 @@ public interface OperacaoRepository extends CrudRepository<OperacaoEntity, Long>
     void updateGrupoIdNullByGrupoId(@Param("idGrupo") Long idGrupo);
 
     List<OperacaoEntity> findAllByIdIn(List<Long> ids);
+
+    List<OperacaoEntity> findAllByIdImportacao(Long idImportacao);
 }

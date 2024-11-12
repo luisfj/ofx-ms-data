@@ -10,13 +10,13 @@ import dev.luisjohann.ofxmsdata.model.mapper.OperacaoMapper;
 import dev.luisjohann.ofxmsdata.repository.jpa.OperacaoRepository;
 import dev.luisjohann.ofxmsdata.repository.r2dbc.OperacaoRepositoryAsync;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,8 +29,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OperacaoService {
 
+    public static final String INSERT_OPERACAO_QUERY = "INSERT INTO operacao " +
+            "(id, id_ue, id_importacao, tipo, data_hora, valor, fit_id, ref_num, memo, status, ordem) " +
+            "VALUES(nextval('operacao_id_seq'::regclass), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+            "on conflict do nothing";
+    final JdbcTemplate jdbcTemplate;
+
     final OperacaoRepository repository;
     final OperacaoRepositoryAsync asyncRepository;
+
+    public void salvarOperacoesEmLote(List<OperacaoEntity> operacoes) {
+        jdbcTemplate.batchUpdate(INSERT_OPERACAO_QUERY, operacoes, 100, (ps, user) -> {
+            ps.setLong(1, user.getIdUe());
+            ps.setLong(2, user.getIdImportacao());
+            ps.setString(3, user.getTipo().name());
+            ps.setDate(4, java.sql.Date.valueOf(user.getDataHora().toLocalDate()));
+            ps.setBigDecimal(5, user.getValor());
+            ps.setString(6, user.getFitId());
+            ps.setString(7, user.getRefNum());
+            ps.setString(8, user.getMemo());
+            ps.setString(9, user.getStatus().name());
+            ps.setLong(10, user.getOrdem());
+        });
+    }
 
     public List<OperacaoEntity> importarOperacoes(Long idUe, ImportacaoEntity importacao,
                                                   List<Operation> operacoes) {
@@ -45,7 +66,9 @@ public class OperacaoService {
                         atomicInteger.incrementAndGet(), null))
                 .toList();
 
-        return (List<OperacaoEntity>) repository.saveAll(operacoesPersist);
+        salvarOperacoesEmLote(operacoesPersist);
+
+        return repository.findAllByIdImportacao(importacao.getId());
     }
 
     public Mono<List<OperacoesDTO>> findByIdImportacao(Long idUe, Long idImportacao) {
@@ -59,7 +82,7 @@ public class OperacaoService {
     }
 
     public Flux<OperacoesProcessadasDTO> findOperacoesProcessadasByDataBetween(Long idUe, LocalDateTime dtInicial,
-                                                                  LocalDateTime dtFinal) {
+                                                                               LocalDateTime dtFinal) {
         return asyncRepository.findOperacoesProcessadasByDataBetween(idUe, dtInicial, dtFinal);
     }
 
