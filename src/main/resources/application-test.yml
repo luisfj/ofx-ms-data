@@ -36,6 +36,7 @@ spring:
         hibernate:
             ddl-auto: none
     flyway:
+        locations: classpath:db/migration/tests
         user: ${conf.db.user}
         password: ${conf.db.pass}
         schemas: public
